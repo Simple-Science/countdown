@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7fb">
+<title>SPM 2026 Countdown</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --panel: rgba(255,255,255,.94);
+    --panel-2: #ffffff;
+    --text: #172033;
+    --muted: #68758a;
+    --line: rgba(28, 45, 75, .12);
+    --accent: #087f5b;
+    --accent-2: #477ef0;
+    --purple: #7758c9;
+    --done: #7b8799;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(ellipse at 12% 5%, rgba(71, 126, 240, .09), transparent 32rem),
+      radial-gradient(ellipse at 88% 18%, rgba(8, 127, 91, .07), transparent 28rem),
+      var(--bg);
+  }
+  .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 38px 0 60px; }
+  .topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: #46536a; letter-spacing: .08em; text-transform: uppercase; font-weight: 750; }
+  .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; color: #ffffff; background: linear-gradient(135deg, var(--accent), #54c9a0); font-weight: 950; }
+  .pill { border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; color: #536078; font-size: .78rem; background: rgba(255,255,255,.78); }
+  .quote-credit { margin-top: 16px; color: var(--muted); font-size: .82rem; }
+  .quote-button { margin-top: 22px; border: 1px solid rgba(8,127,91,.2); background: rgba(8,127,91,.07); color: var(--accent); border-radius: 999px; padding: 10px 15px; font: inherit; font-size: .82rem; font-weight: 750; cursor: pointer; }
+  .quote-button:hover { background: rgba(8,127,91,.12); }
+  .hero { display: grid; grid-template-columns: 1.4fr .8fr; gap: 22px; align-items: stretch; }
+  .hero-main, .hero-side, .section, .exam-card {
+    border: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(16px);
+    box-shadow: 0 14px 40px rgba(25, 42, 70, .07); border-radius: 24px;
+  }
+  .hero-main { padding: clamp(24px, 5vw, 48px); position: relative; overflow: hidden; }
+  .hero-main:after { content:""; position:absolute; width:240px; height:240px; right:-90px; bottom:-120px; border-radius:50%; border:1px solid rgba(8,127,91,.16); box-shadow:0 0 0 28px rgba(8,127,91,.025), 0 0 0 58px rgba(8,127,91,.018); pointer-events:none; }
+  .eyebrow { color: var(--accent); font-size: .78rem; letter-spacing: .16em; font-weight: 800; text-transform: uppercase; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: .98; letter-spacing: -.065em; margin: 18px 0 16px; }
+  h1 span { color: var(--accent); }
+  .intro { max-width: 560px; color: #5c6980; line-height: 1.7; margin: 0; }
+  .hero-side { padding: 25px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+  .side-label { color: var(--muted); text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; font-weight: 800; }
+  .big-number { font-size: clamp(2.8rem, 6vw, 4.2rem); font-weight: 850; letter-spacing: -.06em; margin-top: 8px; }
+  .big-number small { font-size: 1rem; color: var(--muted); letter-spacing: 0; font-weight: 600; }
+  .progress-track { height: 8px; border-radius: 99px; background: rgba(24,43,74,.09); overflow: hidden; margin-top: 15px; }
+  .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: inherit; transition: width .3s ease; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0 34px; }
+  .stat { padding: 16px 18px; border: 1px solid var(--line); border-radius: 17px; background: rgba(255,255,255,.82); }
+  .stat strong { display: block; font-size: 1.45rem; letter-spacing: -.04em; }
+  .stat span { display: block; color: var(--muted); font-size: .78rem; margin-top: 4px; }
+  .section { padding: 24px; margin-top: 18px; }
+  .section-head { display:flex; justify-content:space-between; align-items:end; gap:14px; margin-bottom:18px; }
+  h2 { font-size: 1.35rem; letter-spacing: -.035em; margin: 0; }
+  .section-sub { color: var(--muted); font-size: .85rem; margin-top: 7px; }
+  .section-count { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+  .exam-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+  .exam-card { padding: 18px; border-radius: 18px; background: var(--panel-2); box-shadow: 0 5px 18px rgba(25,42,70,.035); min-width:0; }
+  .card-top { display:flex; justify-content:space-between; gap:12px; align-items:start; }
+  .date-tag { min-width:64px; text-align:center; padding:9px 10px; border-radius:13px; background:rgba(8,127,91,.09); color:var(--accent); font-size:.75rem; font-weight:850; line-height:1.45; }
+  .date-tag b { display:block; font-size:1.25rem; letter-spacing:-.04em; }
+  .subject { font-weight:800; font-size:1.02rem; line-height:1.35; }
+  .paper { color:var(--muted); font-size:.79rem; margin-top:5px; line-height:1.5; }
+  .status { border:1px solid rgba(8,127,91,.18); color:var(--accent); background:rgba(8,127,91,.06); border-radius:999px; padding:5px 8px; font-size:.68rem; font-weight:800; white-space:nowrap; }
+  .countdown { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-top:19px; }
+  .time-box { background:#f5f7fb; border:1px solid rgba(28,45,75,.07); border-radius:11px; text-align:center; padding:10px 4px 8px; }
+  .time-box b { display:block; font-size:1.2rem; font-variant-numeric:tabular-nums; letter-spacing:-.035em; }
+  .time-box span { display:block; font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; margin-top:4px; }
+  .target-time { color:#68758a; font-size:.76rem; margin-top:12px; }
+  .completed .exam-card { opacity:.78; }
+  .completed .date-tag { background:rgba(104,117,138,.10); color:#68758a; }
+  .completed .status { border-color:rgba(104,117,138,.18); color:#68758a; background:rgba(104,117,138,.06); }
+  .completed-note { color:var(--muted); font-size:.86rem; padding:20px 4px 4px; }
+  .empty { display:none; border:1px dashed var(--line); border-radius:16px; padding:25px; text-align:center; color:var(--muted); }
+  .footer { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; color:#68758a; font-size:.76rem; padding:22px 4px 0; line-height:1.6; }
+  .footer a { color:#315fc1; }
+  @media (max-width: 760px) {
+    .wrap { width:min(100% - 22px, 600px); padding-top:22px; }
+    .topline { align-items:flex-start; flex-direction:column; }
+    .hero { grid-template-columns:1fr; }
+    .hero-side { min-height:210px; }
+    .exam-grid { grid-template-columns:1fr; }
+    .section { padding:16px; }
+    .stats { gap:7px; }
+    .stat { padding:13px 11px; }
+    .stat strong { font-size:1.25rem; }
+    .section-head { align-items:start; flex-direction:column; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *:before, *:after { transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topline">
+    <div class="brand"><div class="brand-mark">26</div> SPM Countdown <span style="color:#62718b">/</span></div>
+    <div class="pill">Malaysia time · Live countdown</div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-main">
+      <div class="eyebrow">A little motivation for your SPM journey</div>
+      <h1 id="quoteTitle">Keep going<span>.</span></h1>
+      <p class="intro" id="quoteText">Every focused study session is a step closer to the future you're working for.</p>
+      <div class="quote-credit" id="quoteCredit">A reminder to believe in your progress</div>
+      <button class="quote-button" id="newQuote" type="button">New motivation ↗</button>
+    </div>
+    <aside class="hero-side">
+      <div>
+        <div class="side-label">Next examination</div>
+        <div class="big-number" id="nextDays">— <small>days</small></div>
+        <div id="nextName" style="font-weight:800;font-size:1.05rem;margin-top:5px">Loading your next paper…</div>
+        <div id="nextDate" class="section-sub"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;gap:8px;font-size:.78rem;color:var(--muted)"><span>Exam journey</span><span id="progressText">0% completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </aside>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><strong id="ongoingTotal">—</strong><span>Upcoming exam events</span></div>
+    <div class="stat"><strong id="completedTotal">0</strong><span>Completed events</span></div>
+    <div class="stat"><strong id="daysLeft">—</strong><span>Days until final paper</span></div>
+  </div>
+
+  <section class="section">
+    <div class="section-head">
+      <div><h2>Ongoing exams</h2><div class="section-sub">Live countdowns update every second.</div></div>
+      <div class="section-count" id="ongoingCount">0 papers</div>
+    </div>
+    <div class="exam-grid" id="ongoingList"></div>
+    <div class="empty" id="ongoingEmpty">Nothing left in the queue. You've reached the finish line!</div>
+  </section>
+
+  <section class="section completed">
+    <div class="section-head">
+      <div><h2>Completed</h2><div class="section-sub">Finished events move here automatically.</div></div>
+      <div class="section-count" id="completedCount">0 completed</div>
+    </div>
+    <div class="exam-grid" id="completedList"></div>
+    <div class="completed-note" id="completedEmpty">No completed exams yet — this section will fill itself as each scheduled event ends.</div>
+  </section>
+
+  <div class="footer">
+    <div>Dates based on the published SPM 2026 timetable. Confirm your exact session with your school.</div>
+    <div><a href="https://www.moe.gov.my/Takwim-Peperiksaan-2026" target="_blank" rel="noopener">Official KPM timetable ↗</a></div>
+  </div>
+</div>
+
+<script>
+  // All times use Malaysia local time (UTC+8). Where school-assigned sessions vary,
+  // the countdown ends at 11:59:59 pm on the final scheduled day.
+  const exams = [
+    { id:"bm-speaking", name:"Ujian Bertutur Bahasa Melayu", paper:"1103/3 · Sidang ditetapkan oleh sekolah", start:"2026-10-26T08:00:00+08:00", end:"2026-10-29T23:59:59+08:00", dateLabel:"26–29 OCT", category:"Speaking test" },
+    { id:"english-speaking", name:"Ujian Bertutur Bahasa Inggeris", paper:"1119/3 · Sidang ditetapkan oleh sekolah", start:"2026-11-02T08:00:00+08:00", end:"2026-11-05T23:59:59+08:00", dateLabel:"2–5 NOV", category:"Speaking test" },
+    { id:"physics-practical", name:"Ujian Amali Fizik", paper:"4531/3 · Sidang ditetapkan oleh sekolah", start:"2026-11-16T08:00:00+08:00", end:"2026-11-16T23:59:59+08:00", dateLabel:"16 NOV", category:"Science practical" },
+    { id:"chemistry-practical", name:"Ujian Amali Kimia", paper:"4541/3 · Sidang ditetapkan oleh sekolah", start:"2026-11-17T08:00:00+08:00", end:"2026-11-17T23:59:59+08:00", dateLabel:"17 NOV", category:"Science practical" },
+    { id:"bm-listening", name:"Bahasa Melayu Kertas 4 — Ujian Mendengar", paper:"1103/4 · 9:00–9:30 pagi", start:"2026-11-23T09:00:00+08:00", end:"2026-11-23T09:30:00+08:00", dateLabel:"23 NOV", category:"Listening test" },
+    { id:"bm-p1", name:"Bahasa Melayu Kertas 1", paper:"1103/1 · 10:45 pagi–12:45 tengah hari", start:"2026-11-23T10:45:00+08:00", end:"2026-11-23T12:45:00+08:00", dateLabel:"23 NOV", category:"Written paper" },
+    { id:"bm-p2", name:"Bahasa Melayu Kertas 2", paper:"1103/2 · 2:30–5:00 petang", start:"2026-11-23T14:30:00+08:00", end:"2026-11-23T17:00:00+08:00", dateLabel:"23 NOV", category:"Written paper" },
+    { id:"english-listening", name:"Bahasa Inggeris Kertas 4 — Ujian Mendengar", paper:"1119/4 · 9:00–9:40 pagi", start:"2026-11-24T09:00:00+08:00", end:"2026-11-24T09:40:00+08:00", dateLabel:"24 NOV", category:"Listening test" },
+    { id:"english-p1", name:"Bahasa Inggeris Kertas 1", paper:"1119/1 · 11:00 pagi–12:30 tengah hari", start:"2026-11-24T11:00:00+08:00", end:"2026-11-24T12:30:00+08:00", dateLabel:"24 NOV", category:"Written paper" },
+    { id:"english-p2", name:"Bahasa Inggeris Kertas 2", paper:"1119/2 · 2:30–4:00 petang", start:"2026-11-24T14:30:00+08:00", end:"2026-11-24T16:00:00+08:00", dateLabel:"24 NOV", category:"Written paper" },
+    { id:"religion-moral", name:"Pendidikan Islam Kertas 1 / Pendidikan Moral", paper:"Pilih mata pelajaran yang didaftarkan · 8:15–10:45 pagi", start:"2026-11-25T08:15:00+08:00", end:"2026-11-25T10:45:00+08:00", dateLabel:"25 NOV", category:"Core subject" },
+    { id:"math-p1", name:"Matematik Kertas 1", paper:"1449/1 · 8:15–9:45 pagi", start:"2026-11-26T08:15:00+08:00", end:"2026-11-26T09:45:00+08:00", dateLabel:"26 NOV", category:"Core subject" },
+    { id:"math-p2", name:"Matematik Kertas 2", paper:"1449/2 · 10:45 pagi–1:15 tengah hari", start:"2026-11-26T10:45:00+08:00", end:"2026-11-26T13:15:00+08:00", dateLabel:"26 NOV", category:"Core subject" },
+    { id:"history-p1", name:"Sejarah Kertas 1", paper:"1249/1 · 8:15–9:15 pagi", start:"2026-11-30T08:15:00+08:00", end:"2026-11-30T09:15:00+08:00", dateLabel:"30 NOV", category:"Core subject" },
+    { id:"history-p2", name:"Sejarah Kertas 2", paper:"1249/2 · 10:30 pagi–1:00 tengah hari", start:"2026-11-30T10:30:00+08:00", end:"2026-11-30T13:00:00+08:00", dateLabel:"30 NOV", category:"Core subject" },
+    { id:"physics-p1", name:"Fizik Kertas 1", paper:"4531/1 · 8:15–9:30 pagi", start:"2026-12-03T08:15:00+08:00", end:"2026-12-03T09:30:00+08:00", dateLabel:"3 DEC", category:"STEM elective" },
+    { id:"physics-p2", name:"Fizik Kertas 2", paper:"4531/2 · 10:30 pagi–1:00 tengah hari", start:"2026-12-03T10:30:00+08:00", end:"2026-12-03T13:00:00+08:00", dateLabel:"3 DEC", category:"STEM elective" },
+    { id:"computer-science", name:"Sains Komputer Kertas 1", paper:"3770/1 · 2:30–5:00 petang", start:"2026-12-10T14:30:00+08:00", end:"2026-12-10T17:00:00+08:00", dateLabel:"10 DEC", category:"STEM elective" },
+    { id:"chemistry-p1", name:"Kimia Kertas 1", paper:"4541/1 · 8:15–9:30 pagi", start:"2026-12-15T08:15:00+08:00", end:"2026-12-15T09:30:00+08:00", dateLabel:"15 DEC", category:"STEM elective" },
+    { id:"chemistry-p2", name:"Kimia Kertas 2", paper:"4541/2 · 10:45 pagi–1:15 tengah hari", start:"2026-12-15T10:45:00+08:00", end:"2026-12-15T13:15:00+08:00", dateLabel:"15 DEC", category:"STEM elective" },
+    { id:"addmath-p1", name:"Matematik Tambahan Kertas 1", paper:"3472/1 · 8:15–10:15 pagi", start:"2026-12-17T08:15:00+08:00", end:"2026-12-17T10:15:00+08:00", dateLabel:"17 DEC", category:"STEM elective" },
+    { id:"addmath-p2", name:"Matematik Tambahan Kertas 2", paper:"3472/2 · 2:30–5:00 petang", start:"2026-12-17T14:30:00+08:00", end:"2026-12-17T17:00:00+08:00", dateLabel:"17 DEC", category:"STEM elective" }
+  ];
+
+  const fmt = (n) => String(n).padStart(2, "0");
+  const dateLong = (d) => new Intl.DateTimeFormat("en-MY", { day:"numeric", month:"long", year:"numeric", timeZone:"Asia/Kuala_Lumpur" }).format(d);
+  const dateTime = (d) => new Intl.DateTimeFormat("en-MY", { day:"numeric", month:"short", hour:"numeric", minute:"2-digit", timeZone:"Asia/Kuala_Lumpur" }).format(d);
+  function timeParts(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    return { days:Math.floor(total / 86400), hours:Math.floor((total % 86400) / 3600), minutes:Math.floor((total % 3600) / 60), seconds:total % 60 };
+  }
+  function countdownMarkup(ms) {
+    const t = timeParts(ms);
+    return `<div class="countdown">
+      <div class="time-box"><b>${t.days}</b><span>Days</span></div>
+      <div class="time-box"><b>${fmt(t.hours)}</b><span>Hours</span></div>
+      <div class="time-box"><b>${fmt(t.minutes)}</b><span>Mins</span></div>
+      <div class="time-box"><b>${fmt(t.seconds)}</b><span>Secs</span></div>
+    </div>`;
+  }
+  function card(exam, now, isDone) {
+    const start = new Date(exam.start), end = new Date(exam.end);
+    let timer = "";
+    let status = "";
+    if (isDone) {
+      timer = `<div class="target-time">Finished ${dateTime(end)}</div>`;
+      status = `<span class="status">Completed</span>`;
+    } else if (now < start) {
+      timer = countdownMarkup(start - now);
+      status = `<span class="status">Upcoming</span>`;
+    } else {
+      timer = countdownMarkup(end - now);
+      status = `<span class="status">In progress</span>`;
+    }
+    return `<article class="exam-card">
+      <div class="card-top">
+        <div style="display:flex;gap:12px;min-width:0">
+          <div class="date-tag">${exam.dateLabel.split(" ").slice(-1)[0]}<b>${exam.dateLabel.split(" ")[0]}</b></div>
+          <div style="min-width:0"><div class="subject">${exam.name}</div><div class="paper">${exam.paper}</div></div>
+        </div>
+        ${status}
+      </div>
+      ${timer}
+      <div class="target-time">${isDone ? "Event archived automatically" : now < start ? "Starts " + dateTime(start) : "Ends " + dateTime(end)} · ${exam.category}</div>
+    </article>`;
+  }
+
+  function render() {
+    const now = new Date();
+    const ordered = [...exams].sort((a,b) => new Date(a.start) - new Date(b.start));
+    const ongoing = ordered.filter(e => now <= new Date(e.end));
+    const completed = ordered.filter(e => now > new Date(e.end)).reverse();
+    document.getElementById("ongoingList").innerHTML = ongoing.map(e => card(e, now, false)).join("");
+    document.getElementById("completedList").innerHTML = completed.map(e => card(e, now, true)).join("");
+    document.getElementById("ongoingTotal").textContent = ongoing.length;
+    document.getElementById("completedTotal").textContent = completed.length;
+    document.getElementById("ongoingCount").textContent = `${ongoing.length} ${ongoing.length === 1 ? "event" : "events"}`;
+    document.getElementById("completedCount").textContent = `${completed.length} completed`;
+    document.getElementById("ongoingEmpty").style.display = ongoing.length ? "none" : "block";
+    document.getElementById("completedEmpty").style.display = completed.length ? "none" : "block";
+
+    const finalEnd = new Date("2026-12-17T17:00:00+08:00");
+    document.getElementById("daysLeft").textContent = Math.max(0, Math.ceil((finalEnd-now)/86400000));
+    const next = ordered.find(e => now <= new Date(e.end));
+    if (next) {
+      const start = new Date(next.start);
+      const target = now < start ? start : new Date(next.end);
+      const diff = Math.max(0, target - now);
+      document.getElementById("nextDays").innerHTML = `${timeParts(diff).days} <small>days</small>`;
+      document.getElementById("nextName").textContent = next.name;
+      document.getElementById("nextDate").textContent = now < start ? `Starts ${dateLong(start)} · ${dateTime(start).split(", ").slice(-1)[0]}` : `In progress · ends ${dateTime(new Date(next.end))}`;
+    } else {
+      document.getElementById("nextDays").innerHTML = `0 <small>days</small>`;
+      document.getElementById("nextName").textContent = "SPM 2026 complete!";
+      document.getElementById("nextDate").textContent = "You made it to the finish line.";
+    }
+    const pct = Math.round(completed.length / exams.length * 100);
+    document.getElementById("progressText").textContent = `${pct}% completed`;
+    document.getElementById("progressFill").style.width = `${pct}%`;
+  }
+  const quotes = [
+    { title: "Keep going.", text: "Every focused study session is a step closer to the future you're working for.", credit: "A reminder to trust your progress" },
+    { title: "Small steps. Big results.", text: "You do not need to master everything today. Learn one thing well, then build on it tomorrow.", credit: "One topic at a time" },
+    { title: "Your effort matters.", text: "The work you put in when nobody is watching is still moving you forward.", credit: "Stay consistent" },
+    { title: "Progress over perfection.", text: "A difficult chapter is not a dead end. It is simply the next thing you are learning to understand.", credit: "Keep showing up" },
+    { title: "You can do hard things.", text: "Take a breath, make a plan, and give the next question your best effort.", credit: "Focus on what you can do now" },
+    { title: "Make today count.", text: "Your future self will be glad you chose to begin, even if you only had the energy for one small task.", credit: "Start where you are" }
+  ];
+  let quoteIndex = 0;
+  document.getElementById("newQuote").addEventListener("click", () => {
+    quoteIndex = (quoteIndex + 1) % quotes.length;
+    const quote = quotes[quoteIndex];
+    document.getElementById("quoteTitle").innerHTML = quote.title.replace(/\\.$/, "") + '<span>.</span>';
+    document.getElementById("quoteText").textContent = quote.text;
+    document.getElementById("quoteCredit").textContent = quote.credit;
+  });
+
+  render();
+  setInterval(render, 1000);
+</script>
+</body>
+</html>
