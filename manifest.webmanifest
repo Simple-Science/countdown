@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "SPM 2026 Countdown \u2014 STEM B",
+  "short_name": "SPM Countdown",
+  "description": "A motivating SPM 2026 countdown for STEM B students.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f4f7fb",
+  "theme_color": "#f5f7fb",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
